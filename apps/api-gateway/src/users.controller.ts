@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Inject, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { CreateUserDto } from '@app/shared';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { CreateUserDto, UserResponseDto } from '@app/shared';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('users')
@@ -21,6 +21,7 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Find user by email (Protected)' })
+  @ApiResponse({ status: 200, type: UserResponseDto, description: 'The found user record' })
   findUser(@Param('email') email: string) {
     return this.client.send({ cmd: 'find_user' }, email);
   }

@@ -7,3 +7,4 @@ export * from './dtos/create-user.dto';
 export * from './dtos/create-order.dto';
 export * from './dtos/update-artist.dto';
 export * from './dtos/update-album.dto';
+export * from './dtos/user-response.dto';
