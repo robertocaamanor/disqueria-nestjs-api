@@ -41,8 +41,8 @@ The system is composed of the following applications:
     DB_PASSWORD=your_password
     DB_DATABASE=disqueria-local
     JWT_SECRET=super-secret-key
-    ADMIN_EMAIL=raristides.caamano@gmail.com
-    ADMIN_PASSWORD=Is.2025rc
+    ADMIN_EMAIL=your_email@example.com
+    ADMIN_PASSWORD=your_secure_password
     ```
 
 ## 📦 Installation
@@ -86,8 +86,8 @@ Most write operations (POST, PUT, DELETE) are protected. To test them:
 
 On first startup, the application seeds a default admin user if configured in your `.env`:
 
-*   **Email**: `raristides.caamano@gmail.com`
-*   **Password**: `Is.2025rc`
+*   **Email**: The value set in `ADMIN_EMAIL`
+*   **Password**: The value set in `ADMIN_PASSWORD`
 
 ## 📡 API Endpoints
 
