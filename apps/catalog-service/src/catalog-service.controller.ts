@@ -4,7 +4,7 @@ import { CatalogServiceService } from './catalog-service.service';
 
 @Controller()
 export class CatalogServiceController {
-  constructor(private readonly catalogService: CatalogServiceService) {}
+  constructor(private readonly catalogService: CatalogServiceService) { }
 
   @MessagePattern({ cmd: 'get_artists' })
   async getArtists() {
@@ -44,5 +44,10 @@ export class CatalogServiceController {
   @MessagePattern({ cmd: 'delete_album' })
   async deleteAlbum(@Payload() id: number) {
     return this.catalogService.deleteAlbum(id);
+  }
+
+  @MessagePattern({ cmd: 'decrease_stock' })
+  async decreaseStock(@Payload() data: { id: number; quantity: number }) {
+    return this.catalogService.decreaseStock(data.id, data.quantity);
   }
 }

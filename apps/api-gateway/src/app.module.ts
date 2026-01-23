@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
@@ -13,6 +15,10 @@ import { OrdersController } from './orders.controller';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'public'),
+      serveRoot: '/public',
     }),
     AuthModule,
     ClientsModule.register([
@@ -45,4 +51,4 @@ import { OrdersController } from './orders.controller';
   controllers: [AppController, CatalogController, UsersController, OrdersController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

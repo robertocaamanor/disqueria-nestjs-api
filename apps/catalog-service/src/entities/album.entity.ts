@@ -18,6 +18,12 @@ export class Album {
   @Column()
   price: number;
 
+  @Column({ default: 0 })
+  stock: number;
+
+  @Column({ nullable: true })
+  coverImage: string;
+
   @ManyToOne(() => Artist, (artist) => artist.albums, { onDelete: 'CASCADE' })
   artist: Artist;
 }

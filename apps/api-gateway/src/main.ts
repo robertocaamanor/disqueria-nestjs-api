@@ -1,11 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe());
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.enableCors();
+  
+  // Serve static files from the 'public' directory
+  app.useStaticAssets(join(__dirname, '..', '..', '..', 'public'), {
+    prefix: '/',
+  });
 
   const { DocumentBuilder, SwaggerModule } = require('@nestjs/swagger');
   const config = new DocumentBuilder()
