@@ -42,7 +42,7 @@ export class CatalogServiceService {
     return this.artistRepository.findOne({ where: { id } });
   }
 
-  async deleteArtist(id: number): Promise<void> {
+  async deleteArtist(id: number): Promise<{ success: boolean; message: string }> {
     const artist = await this.artistRepository.findOne({ where: { id } });
     if (!artist) {
       throw new RpcException({
@@ -51,6 +51,7 @@ export class CatalogServiceService {
       });
     }
     await this.artistRepository.delete(id);
+    return { success: true, message: 'Artist deleted successfully' };
   }
 
   async updateAlbum(id: number, data: Partial<Album> & { artistId?: number }): Promise<Album | null> {
@@ -82,7 +83,7 @@ export class CatalogServiceService {
     return this.albumRepository.save(album);
   }
 
-  async deleteAlbum(id: number): Promise<void> {
+  async deleteAlbum(id: number): Promise<{ success: boolean; message: string }> {
     const album = await this.albumRepository.findOne({ where: { id } });
     if (!album) {
       throw new RpcException({
@@ -91,6 +92,7 @@ export class CatalogServiceService {
       });
     }
     await this.albumRepository.delete(id);
+    return { success: true, message: 'Album deleted successfully' };
   }
 
   async decreaseStock(id: number, quantity: number): Promise<Album> {
