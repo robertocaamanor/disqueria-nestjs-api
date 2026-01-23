@@ -43,6 +43,13 @@ export class CatalogServiceService {
   }
 
   async deleteArtist(id: number): Promise<void> {
+    const artist = await this.artistRepository.findOne({ where: { id } });
+    if (!artist) {
+      throw new RpcException({
+        statusCode: 404,
+        message: 'Artist not found'
+      });
+    }
     await this.artistRepository.delete(id);
   }
 
@@ -76,6 +83,13 @@ export class CatalogServiceService {
   }
 
   async deleteAlbum(id: number): Promise<void> {
+    const album = await this.albumRepository.findOne({ where: { id } });
+    if (!album) {
+      throw new RpcException({
+        statusCode: 404,
+        message: 'Album not found'
+      });
+    }
     await this.albumRepository.delete(id);
   }
 
