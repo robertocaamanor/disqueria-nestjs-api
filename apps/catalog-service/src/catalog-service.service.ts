@@ -43,14 +43,19 @@ export class CatalogServiceService {
   }
 
   async deleteArtist(id: number): Promise<{ success: boolean; message: string }> {
-    const artist = await this.artistRepository.findOne({ where: { id } });
+    const artist = await this.artistRepository.findOne({ 
+      where: { id },
+      relations: ['albums']
+    });
     if (!artist) {
       throw new RpcException({
         statusCode: 404,
         message: 'Artist not found'
       });
     }
-    await this.artistRepository.delete(id);
+    
+    // TypeORM con onDelete: 'CASCADE' en la relación eliminará los álbumes automáticamente
+    await this.artistRepository.remove(artist);
     return { success: true, message: 'Artist deleted successfully' };
   }
 

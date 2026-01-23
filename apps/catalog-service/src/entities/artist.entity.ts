@@ -12,6 +12,6 @@ export class Artist {
   @Column({ nullable: true })
   country: string;
 
-  @OneToMany(() => Album, (album) => album.artist)
+  @OneToMany(() => Album, (album) => album.artist, { cascade: true })
   albums: Album[];
 }

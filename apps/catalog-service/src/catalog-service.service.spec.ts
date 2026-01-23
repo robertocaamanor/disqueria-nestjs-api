@@ -37,6 +37,7 @@ describe('CatalogServiceService', () => {
     save: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    remove: jest.fn(),
   };
 
   const mockAlbumRepository = {
@@ -284,28 +285,30 @@ describe('CatalogServiceService', () => {
 
   describe('deleteArtist', () => {
     it('should delete an artist', async () => {
-      mockArtistRepository.delete.mockResolvedValue({ affected: 1, raw: [] });
+      mockArtistRepository.findOne.mockResolvedValue(mockArtist);
+      mockArtistRepository.remove.mockResolvedValue(mockArtist);
 
-      await service.deleteArtist(1);
+      const result = await service.deleteArtist(1);
 
-      expect(artistRepository.delete).toHaveBeenCalledWith(1);
-      expect(artistRepository.delete).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({ success: true, message: 'Artist deleted successfully' });
+      expect(artistRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 }, relations: ['albums'] });
+      expect(artistRepository.remove).toHaveBeenCalledWith(mockArtist);
     });
 
     it('should handle deletion of non-existent artist', async () => {
-      mockArtistRepository.delete.mockResolvedValue({ affected: 0, raw: [] });
+      mockArtistRepository.findOne.mockResolvedValue(null);
 
-      await service.deleteArtist(999);
-
-      expect(artistRepository.delete).toHaveBeenCalledWith(999);
+      await expect(service.deleteArtist(999)).rejects.toThrow('Artist not found');
+      expect(artistRepository.findOne).toHaveBeenCalledWith({ where: { id: 999 }, relations: ['albums'] });
     });
 
     it('should handle delete errors', async () => {
       const error = new Error('Delete failed');
-      mockArtistRepository.delete.mockRejectedValue(error);
+      mockArtistRepository.findOne.mockResolvedValue(mockArtist);
+      mockArtistRepository.remove.mockRejectedValue(error);
 
       await expect(service.deleteArtist(1)).rejects.toThrow('Delete failed');
-      expect(artistRepository.delete).toHaveBeenCalledWith(1);
+      expect(artistRepository.remove).toHaveBeenCalledWith(mockArtist);
     });
   });
 
@@ -313,47 +316,44 @@ describe('CatalogServiceService', () => {
     it('should update and return an album', async () => {
       const updateData = { title: 'Abbey Road - Remastered', price: 24.99 };
       const updatedAlbum = { ...mockAlbum, ...updateData };
-      mockAlbumRepository.update.mockResolvedValue({ affected: 1, raw: [], generatedMaps: [] });
-      mockAlbumRepository.findOne.mockResolvedValue(updatedAlbum);
+      mockAlbumRepository.findOne.mockResolvedValue(mockAlbum);
+      mockAlbumRepository.save.mockResolvedValue(updatedAlbum);
 
       const result = await service.updateAlbum(1, updateData);
 
       expect(result).toEqual(updatedAlbum);
-      expect(albumRepository.update).toHaveBeenCalledWith(1, updateData);
-      expect(albumRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      expect(albumRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 }, relations: ['artist'] });
+      expect(albumRepository.save).toHaveBeenCalled();
     });
 
     it('should return null when album is not found', async () => {
       const updateData = { title: 'Non-existent' };
-      mockAlbumRepository.update.mockResolvedValue({ affected: 0, raw: [], generatedMaps: [] });
       mockAlbumRepository.findOne.mockResolvedValue(null);
 
-      const result = await service.updateAlbum(999, updateData);
-
-      expect(result).toBeNull();
-      expect(albumRepository.update).toHaveBeenCalledWith(999, updateData);
-      expect(albumRepository.findOne).toHaveBeenCalledWith({ where: { id: 999 } });
+      await expect(service.updateAlbum(999, updateData)).rejects.toThrow('Album not found');
+      expect(albumRepository.findOne).toHaveBeenCalledWith({ where: { id: 999 }, relations: ['artist'] });
     });
 
     it('should update single album property', async () => {
       const updateData = { price: 29.99 };
       const updatedAlbum = { ...mockAlbum, price: 29.99 };
-      mockAlbumRepository.update.mockResolvedValue({ affected: 1, raw: [], generatedMaps: [] });
-      mockAlbumRepository.findOne.mockResolvedValue(updatedAlbum);
+      mockAlbumRepository.findOne.mockResolvedValue(mockAlbum);
+      mockAlbumRepository.save.mockResolvedValue(updatedAlbum);
 
       const result = await service.updateAlbum(1, updateData);
 
       expect(result.price).toBe(29.99);
-      expect(albumRepository.update).toHaveBeenCalledWith(1, updateData);
+      expect(albumRepository.save).toHaveBeenCalled();
     });
 
     it('should handle update errors', async () => {
       const updateData = { title: 'Error' };
       const error = new Error('Update failed');
-      mockAlbumRepository.update.mockRejectedValue(error);
+      mockAlbumRepository.findOne.mockResolvedValue(mockAlbum);
+      mockAlbumRepository.save.mockRejectedValue(error);
 
       await expect(service.updateAlbum(1, updateData)).rejects.toThrow('Update failed');
-      expect(albumRepository.update).toHaveBeenCalledWith(1, updateData);
+      expect(albumRepository.save).toHaveBeenCalled();
     });
   });
 
