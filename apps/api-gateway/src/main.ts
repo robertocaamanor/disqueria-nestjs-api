@@ -7,7 +7,13 @@ import { join } from 'path';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://disqueria-front-react-production.up.railway.app'
+    ],
+    credentials: true
+  });
   
   // Serve static files from the 'public' directory
   app.useStaticAssets(join(__dirname, '..', '..', '..', 'public'), {
