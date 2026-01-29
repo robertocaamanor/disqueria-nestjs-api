@@ -12,6 +12,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/apps/api-gateway/main",
+    "start:prod:all": "node dist/apps/api-gateway/main & node dist/apps/catalog-service/main & node dist/apps/users-service/main & node dist/apps/orders-service/main",
     "start:all": "concurrently \"npm run start:dev api-gateway\" \"npm run start:dev catalog-service\" \"npm run start:dev users-service\" \"npm run start:dev orders-service\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",

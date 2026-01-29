@@ -1,0 +1,28 @@
+services:
+  # API Gateway - Servicio web principal
+  - type: web
+    name: disqueria-api-gateway
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node dist/apps/api-gateway/main & node dist/apps/catalog-service/main & node dist/apps/users-service/main & node dist/apps/orders-service/main
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        value: dpg-d5sjkuogjchc73b0e8i0-a.oregon-postgres.render.com
+      - key: DB_PORT
+        value: 5432
+      - key: DB_USERNAME
+        value: portfolio
+      - key: DB_PASSWORD
+        value: dLWfxEHnnHPGLeSibtVGMQMI4V6OIUkP
+      - key: DB_DATABASE
+        value: portfolio_n0rn
+      - key: JWT_SECRET
+        sync: false # Se debe configurar manualmente en Render Dashboard
+      - key: ADMIN_EMAIL
+        value: raristides.caamano@gmail.com
+      - key: ADMIN_PASSWORD
+        sync: false # Se debe configurar manualmente en Render Dashboard
