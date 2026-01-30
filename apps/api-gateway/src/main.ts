@@ -9,12 +9,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.enableCors({
     origin: [
-      'http://localhost:3000',
+      'http://localhost:5173',
       'https://disqueria-front-react-production.up.railway.app'
     ],
     credentials: true
   });
-  
+
   // Serve static files from the 'public' directory
   app.useStaticAssets(join(__dirname, '..', '..', '..', 'public'), {
     prefix: '/',
@@ -32,7 +32,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  
+
   const port = process.env.PORT || 3005;
   await app.listen(port);
   console.log(`Application is running on: ${await app.getUrl()}`);
